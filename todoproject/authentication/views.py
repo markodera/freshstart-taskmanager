@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth import login,logout
 from django.contrib.auth.decorators import login_required
-
+from tasks.models import Task
 # Create your views here.
 
 
@@ -31,7 +31,9 @@ class CustomLoginView(LoginView):
 
 @login_required
 def dashboard(request):
-    return render(request, "authentication/home.html")
+    # Fetch tasks for the authenticated user
+    tasks = Task.objects.filter(user=request.user)
+    return render(request, "authentication/home.html", {"tasks": tasks})
 
 #log out view
 def logout_view(request):

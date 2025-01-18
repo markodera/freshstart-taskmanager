@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% block title %}Fresh Start: Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    {% if user.is_authenticated %}
+        <!-- Header Section -->
+        <div class="dashboard-header">
+            <h2>Welcome, {{ user.username }}</h2>
+            <button type="button" class="btn btn-primary rounded-circle" data-bs-toggle="modal" data-bs-target="#taskModal">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+
+        <!-- Tasks Grid -->
+        <div class="tasks-grid">
+            {% for task in tasks %}
+                <div class="task-card shadow-sm {% if task.completed %}bg-light{% endif %}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title {% if task.completed %}text-muted{% endif %}">{{ task.title }}</h5>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input task-complete-checkbox" 
+                                       data-task-id="{{ task.id }}" {% if task.completed %}checked{% endif %}>
+                            </div>
+                        </div>
+                        <p class="card-text">{{ task.description|truncatewords:30 }}</p>
+                        <div class="task-actions">
+                            <button class="btn btn-sm btn-outline-primary edit-task" 
+                                    data-task-id="{{ task.id }}" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#taskModal">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-task" 
+                                    data-task-id="{{ task.id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-tasks-message">
+                    <i class="fas fa-tasks fa-3x mb-3"></i>
+                    <p>No tasks yet! Click the + button to add your first task.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Task Modal -->
+        <div class="modal fade" id="taskModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="taskModalLabel">Add New Task</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="taskForm" method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save Task</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Landing page for non-authenticated users -->
+        <div class="welcome-section text-center">
+            <h1>Welcome to Fresh Start</h1>
+            <p class="lead">Your personal task management solution</p>
+            <div class="action-buttons">
+                <a href="{% url 'authentication:login' %}" class="btn btn-primary btn-lg">Login</a>
+                <a href="{% url 'authentication:signup' %}" class="btn btn-outline-primary btn-lg">Sign Up</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .tasks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem 0;
+    }
+
+    .task-card {
+        border-radius: 10px;
+        transition: transform 0.2s ease;
+    }
+
+    .task-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .task-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .no-tasks-message {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    .welcome-section {
+        padding: 5rem 1rem;
+    }
+
+    .action-buttons {
+        margin-top: 2rem;
+        gap: 1rem;
+        display: flex;
+        justify-content: center;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // CSRF token setup for AJAX requests
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Task completion toggle
+        document.querySelectorAll('.task-complete-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const taskId = this.dataset.taskId;
+                fetch(`/tasks/${taskId}/toggle/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const taskCard = this.closest('.task-card');
+                        taskCard.classList.toggle('bg-light');
+                        taskCard.querySelector('.card-title').classList.toggle('text-muted');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+
+        // Edit task
+        document.querySelectorAll('.edit-task').forEach(button => {
+            button.addEventListener('click', function() {
+                const taskId = this.dataset.taskId;
+                fetch(`/tasks/${taskId}/`, {
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => response.json())
+                .then(task => {
+                    document.getElementById('title').value = task.title;
+                    document.getElementById('description').value = task.description;
+                    document.getElementById('taskForm').setAttribute('data-task-id', taskId);
+                    document.getElementById('taskModalLabel').textContent = 'Edit Task';
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+
+        // Delete task
+        document.querySelectorAll('.delete-task').forEach(button => {
+            button.addEventListener('click', function() {
+                const taskId = this.dataset.taskId;
+                if (confirm('Are you sure you want to delete this task?')) {
+                    fetch(`/tasks/${taskId}/delete/`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.closest('.task-card').remove();
+                            if (document.querySelectorAll('.task-card').length === 0) {
+                                location.reload(); // Reload to show "no tasks" message
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                }
+            });
+        });
+
+        // Form submission handling
+        document.getElementById('taskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const taskId = this.getAttribute('data-task-id');
+            const url = taskId ? `/tasks/${taskId}/update/` : '/tasks/create/';
+            const method = taskId ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+
+{% endblock %}

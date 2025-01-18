@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    "tasks.apps.TasksConfig",
     "authentication.apps.AuthenticationConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -56,7 +57,11 @@ ROOT_URLCONF = "todoproject.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'authentication/templates'],
+        "DIRS": [
+            BASE_DIR / 'templates',
+            BASE_DIR / 'authentication/templates',
+            BASE_DIR / 'tasks/templates',
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
