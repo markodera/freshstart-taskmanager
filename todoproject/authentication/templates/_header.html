@@ -1,0 +1,21 @@
+<header>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{% url 'authentication:dashboard' %}">Fresh Start</a>
+        </div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links">
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'authentication:dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'authentication:logout' %}">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'authentication:login' %}">Login</a></li>
+                <li><a href="{% url 'authentication:signup' %}">Sign Up</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</header>

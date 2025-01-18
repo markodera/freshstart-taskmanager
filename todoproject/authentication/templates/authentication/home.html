@@ -1,0 +1,21 @@
+{% extends '../base.html' %}
+{% block title %}Fresh Start: Home{% endblock %}
+{% block content %}
+<div class="welcome-container">
+    {% if user.is_authenticated %}
+        <h2>Welcome, {{user.username}}!</h2>
+        <p>Start managing your tasks today.</p>
+        <div class="action-buttons">
+            <a href="#" class="btn btn-primary">View Tasks</a>
+            <a href="{% url 'authentication:logout' %}" class="btn btn-secondary">Logout</a>
+        </div>
+    {% else %}
+        <h2>Welcome to TodoApp</h2>
+        <p>Your personal task management solution</p>
+        <div class="action-buttons">
+            <a href="{% url 'authentication:login' %}" class="btn btn-primary">Login</a>
+            <a href="{% url 'authentication:signup' %}" class="btn btn-secondary">Sign Up</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
