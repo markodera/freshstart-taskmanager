@@ -23,7 +23,7 @@ A full-featured task management application built with Django. This project was 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/freshstart-taskmanager.git
+git clone https://github.com/markodera/freshstart-taskmanager.git
 cd freshstart-taskmanager
 ```
 
