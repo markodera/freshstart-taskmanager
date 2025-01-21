@@ -25,12 +25,14 @@ SECRET_KEY = "django-insecure-0d#oz6&kw7^6o0zeq9m#$*70z#b=#m%$h760cjfx_58@whqzbm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "crispy_forms",
+    "crispy_bootstrap5",
     "tasks.apps.TasksConfig",
     "authentication.apps.AuthenticationConfig",
     "django.contrib.admin",
@@ -41,7 +43,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 AUTH_USER_MODEL = "authentication.CustomUser"
+
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -58,9 +65,9 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            BASE_DIR / 'templates',
-            BASE_DIR / 'authentication/templates',
-            BASE_DIR / 'tasks/templates',
+            BASE_DIR / "templates",
+            BASE_DIR / "authentication/templates",
+            BASE_DIR / "tasks/templates",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -125,10 +132,13 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-LOGIN_URL = 'authentication:login'
+
+# Login Logout URLs
+LOGIN_URL = "authentication:login"
+LOGOUT_REDIRECT_URL = "authentication:login"

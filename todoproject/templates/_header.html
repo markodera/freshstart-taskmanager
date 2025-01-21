@@ -1,39 +1,32 @@
 <header>
-    <nav class="navbar">
-        <div class="nav-brand">
-            <a href="{% url 'authentication:dashboard' %}">Fresh Start</a>
+    <nav class="navbar navbar-expand-lg navbar-dark custom-bg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'tasks:task_list' %}">Fresh Start</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'tasks:task_create' %}">Add Task</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'tasks:task_list' %}">View Tasks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'authentication:logout' %}" class="nav-link">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'authentication:login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'authentication:signup' %}">Sign Up</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
-        <div class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <div class="nav-brand">
-        </div>
-        <ul class="nav-links">
-            {% if user.is_authenticated %}
-                <li><a href="{% url 'authentication:dashboard' %}">Dashboard</a></li>
-                <li><a href="{% url 'authentication:logout' %}">Logout</a></li>
-            {% else %}
-                <li><a href="{% url 'authentication:login' %}">Login</a></li>
-                <li><a href="{% url 'authentication:signup' %}">Sign Up</a></li>
-            {% endif %}
     </nav>
 </header>
-<!-- 
-<header>
-    <nav>
-        <div class="nav-brand">
-            <a href="{% url 'authentication:dashboard' %}">TodoApp</a>
-        </div>
-        <ul class="nav-links">
-            {% if user.is_authenticated %}
-                <li><a href="{% url 'authentication:dashboard' %}">Dashboard</a></li>
-                <li><a href="{% url 'authentication:logout' %}">Logout</a></li>
-            {% else %}
-                <li><a href="{% url 'authentication:login' %}">Login</a></li>
-                <li><a href="{% url 'authentication:signup' %}">Sign Up</a></li>
-            {% endif %}
-        </ul>
-    </nav>
-</header> -->

@@ -1,7 +1,10 @@
 from django import forms
 from .models import Task
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 
 class TaskForm(forms.ModelForm):
+    # Custom date field with a date picker widget
     due_date = forms.DateField(
         required=False,
         widget=forms.DateInput(
@@ -40,3 +43,9 @@ class TaskForm(forms.ModelForm):
             if due_date < timezone.now().date():
                 raise forms.ValidationError("Due date cannot be in the past")
         return due_date
+
+    def __init__(self, *args, **kwargs):
+        super(TaskForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Save Task'))
