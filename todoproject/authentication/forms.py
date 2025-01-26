@@ -6,12 +6,13 @@ from django.contrib.auth.forms import (
     SetPasswordForm,
 )
 from .models import CustomUser
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.urls import reverse
 from .tokens import account_activation_token
+from django.conf import settings
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -49,27 +50,39 @@ class CustomUserCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.is_active = False
+        user.email = self.cleaned_data['email']
         if commit:
             user.save()
-            self.send_activation_email(user)
         return user
 
-    def send_activation_email(self, user):
-        subject = "Activate your account"
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        token = account_activation_token.make_token(user)
-        activation_link = reverse(
-            "authentication:activate", kwargs={"uidb64": uid, "token": token}
-        )
-        activation_url = f"http://localhost:8000{activation_link}"
-        message = render_to_string(
-            "authentication/account_activation_email.html",
-            {
-                "user": user,
-                "activation_url": activation_url,
-            },
-        )
-        send_mail(subject, message, "theoffixialme@gmail.com", [user.email])
+    def send_activation_email(self, request, user):  # Changed signature to include request
+        try:
+            subject = "Activate your Fresh Start account"
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = account_activation_token.make_token(user)
+            
+            domain = request.get_host()
+            protocol = 'https' if request.is_secure() else 'http'
+            activation_url = f"{protocol}://{domain}/auth/activate/{uid}/{token}/"
+            
+            email_body = render_to_string('authentication/account_activation_email.html', {
+                'user': user,
+                'activation_url': activation_url,
+            })
+            
+            email = EmailMessage(
+                subject,
+                email_body,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+            )
+            email.content_subtype = "html"
+            email.send(fail_silently=False)
+            
+        except Exception as e:
+            user.is_active = True
+            user.save()
+            raise forms.ValidationError(f"Error sending activation email: {str(e)}")
 
 
 class CustomAuthenticationForm(AuthenticationForm):

@@ -32,12 +32,6 @@
                         </li>
                     {% endif %}
                 </ul>
-                {% if user.is_authenticated  %}
-                    <form class="d-flex search-form" role="search" method="GET">
-                        <input class="form-control search-input me-2" type="search" name="q" placeholder="Search tasks..." aria-label="Search" value="{{ request.GET.q }}">
-                        <button class="btn btn-custom-outline" type="submit">Search</button>
-                    </form>
-                {% endif %}
             </div>
         </div>
     </nav>

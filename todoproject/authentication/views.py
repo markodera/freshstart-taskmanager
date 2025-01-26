@@ -1,33 +1,36 @@
+from django.contrib import messages
 from django.shortcuts import redirect
-from .forms import (
-    CustomUserCreationForm,
-    CustomAuthenticationForm,
-    CustomPasswordChangeForm,
-)
-from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
-from django.contrib.auth import logout
-from .tokens import account_activation_token
-from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib import messages
-from django.contrib.auth import get_user_model
+from django.utils.http import urlsafe_base64_decode
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, CustomPasswordChangeForm
+from .tokens import account_activation_token
+from django.contrib.auth import get_user_model, logout
+from django.contrib.auth.views import LoginView, PasswordChangeView
 
 User = get_user_model()
-
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
     template_name = "authentication/signup_form.html"
-    success_url = reverse_lazy("tasks:task_list")
+    success_url = reverse_lazy("authentication:login")
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        form.send_activation_email(self.request, self.object)
-        return response
-
+        try:
+            self.object = form.save()
+            form.send_activation_email(self.request, self.object)
+            messages.success(
+                self.request,
+                "Please check your email to activate your account."
+            )
+            return redirect(self.success_url)
+        except Exception as e:
+            messages.error(
+                self.request,
+                "There was an error sending the activation email. Please try again."
+            )
+            return self.form_invalid(form)
 
 def activate(request, uidb64, token):
     try:
@@ -36,15 +39,15 @@ def activate(request, uidb64, token):
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
-    if user is not None and account_activation_token.check_token(user, token):
+    if user and account_activation_token.check_token(user, token):
         user.is_active = True
+        user.is_email_verified = True
         user.save()
         messages.success(request, "Your account has been activated successfully!")
         return redirect("authentication:login")
     else:
-        messages.error(request, "Activation link is invalid!")
+        messages.error(request, "Invalid activation link!")
         return redirect("authentication:signup")
-
 
 class CustomLoginView(LoginView):
     template_name = "authentication/login.html"
@@ -54,12 +57,10 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         return reverse_lazy("tasks:task_list")
 
-
 # logout view
 def logout_view(request):
     logout(request)
     return redirect("authentication:login")
-
 
 class CustomPasswordChangeView(PasswordChangeView):
     template_name = "authentication/password_change_form.html"

@@ -7,9 +7,10 @@ app_name = "authentication"
 
 urlpatterns = [
     path("signup/", views.SignUpView.as_view(), name="signup"),
+    path('activate/<uidb64>/<token>/',views.activate, name='activate'),
     path(
         "login/",
-        views.CustomLoginView.as_view(template_name="authentication/login.html"),
+        views.CustomLoginView.as_view(),
         name="login",
     ),
     path("logout/", views.logout_view, name="logout"),
