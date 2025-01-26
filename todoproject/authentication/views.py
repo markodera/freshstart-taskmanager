@@ -65,3 +65,4 @@ def logout_view(request):
 class CustomPasswordChangeView(PasswordChangeView):
     template_name = "authentication/password_change_form.html"
     form_class = CustomPasswordChangeForm
+    success_url = reverse_lazy('authentication:password_change_done')
