@@ -9,7 +9,6 @@ A full-featured task management application built with Django. This project was 
 - 🔄 Real-time task status updates
 - 🏷️ Task prioritization
 - 📅 Due date management
-- 🔍 Search and filter capabilities
 - 📱 Responsive design
 
 ## Tech Stack
