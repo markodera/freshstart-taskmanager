@@ -10,7 +10,8 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    padding-top: 4rem; /* Adjust based on navbar height */
+    font-family: 'Inter', sans-serif;
     line-height: 1.6;
 }
 
@@ -70,6 +71,123 @@ body {
     position: fixed;
     bottom: 0;
     width: 100%;
+}
+
+/* Custom navbar background */
+.custom-bg {
+    background-color: #0f172a;
+}
+
+/* Custom button styling */
+.btn-custom-outline {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.btn-custom-outline:hover {
+    color: #0f172a;
+    background-color: #fff;
+    border-color: #fff;
+    transform: translateY(-1px);
+}
+
+/* Dropdown menu styling */
+.dropdown-menu {
+    background-color: #1a2640;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dropdown-item {
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+    padding: 0.5rem 1.5rem;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transform: translateX(5px);
+}
+
+.dropdown-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    margin: 0.5rem 0;
+}
+
+/* Custom search bar styling */
+.form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Updated search styling */
+.search-form {
+    max-width: 300px;
+}
+
+.search-input {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #0f172a !important;
+}
+
+.search-input:focus {
+    background-color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    color: #0f172a !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.2);
+}
+
+.search-input::placeholder {
+    color: #666 !important;
+}
+
+/* Updated dropdown styling */
+.dropdown-menu-dark {
+    background-color: #1e293b !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dropdown-menu-dark .dropdown-item {
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.2s ease;
+}
+
+.dropdown-menu-dark .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.dropdown-menu-dark .dropdown-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Ensure navbar stays on top */
+.navbar.fixed-top {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1030;
 }
 
 @media screen and (max-width: 768px) {

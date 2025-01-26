@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
-{% block title %} Fresh Start - {{view.object.pk|yesno:"Edit Task,Create Task" }}{% endblock %}
+{% block title %}{{view.object.pk|yesno:"Edit Task,Create Task" }}{% endblock %}
 
 {% block content %}
 <div class="task-form">
