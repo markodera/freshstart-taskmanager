@@ -95,7 +95,7 @@ WSGI_APPLICATION = "todoproject.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'fresh_start',  # Your database name
+        'NAME': 'fresh_start',  # database name
         'USER': 'root',
         'PASSWORD': 'oderamark120@gmail.com',
         'HOST': 'localhost',      # Set to your MySQL host
